@@ -19,19 +19,35 @@
 
     <style type="text/css">
         body  {padding: 20px;}
-        input {margin-bottom: 5px; padding: 2px 3px; width: 4em; float: right; }
+        input { width: 4em; margin-left: 2px; }
         td    {padding: 4px; border: 1px black;}
 
         div.container {
             width: 100%;
             margin: 0px;
-            border: 1px solid gray;
             line-height: 150%;
         }
 
+        div.input-div {
+            background: #f0f0f0;
+            display: inline-block;
+            padding: 5px;
+            min-height: 1.6em;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+
+        div.results-area {
+            border: solid 1px #ccc;
+            border-radius: 10px;
+            margin: 10px;
+            padding: 10px;
+        }
+
         div.header, div.footer {
+            margin-top: 15px;
             padding: 0.5em;
-            background-color: #CCCCCC;
+            background-color: #ddd;
             clear: left;
         }
 
@@ -52,7 +68,7 @@
             padding: 1em;
         }
 
-        ul {
+        /*ul {
             float: left;
             width: 100%;
             padding: 0;
@@ -61,14 +77,18 @@
         }
 
         li {
-            display: inline;
+            display: inline-block;
 
             float: left;
             width: 16em;
-            height: 1.6em;
+            height: 3.2em;
             text-decoration: none;
             padding: 0.2em 0.6em;
             border-right: 1px solid #CCCCCC;
+        }*/
+
+        small.metric, small.imperial {
+            font-style: italic;
         }
 
         .metric   .metric   { display: inline; }
@@ -76,59 +96,58 @@
         .imperial .metric   { display: none;   }
         .imperial .imperial { display: inline; }
 
-        div.results li { width: 16em; }
-        div.results ul li ul li { width: 6em; border: none;}
+        /*div.results li { width: 16em; }
+        div.results ul li ul li { width: 6em; border: none;}*/
     </style>
   </head>
 
 <body role="document">
-<div id="inputs" class="container imperial">
+<div id="inputs" class="container metric">
     <div class="header">
-        <!-- Donation button -->
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-            <h2 class="header" style="display: inline;">Milling Speeds &amp; Feeds</h2>
-            <input type="hidden" name="cmd" value="_s-xclick"/>
-            <input type="hidden" name="hosted_button_id" value="UXF9L3E8TEVJA"/>
-            <input type="image" style="float: none;" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="Donate!"/>
-        </form>
-
-        <a href="instructions.html">Instructions</a>
-        <br/>
-        <br/>
-        <a href="http://brturn.github.io/feeds-and-speeds/beta.html">NEW -- BETA -- HSM Calculator!</a> <br/>
-   </div>
-
-    <hr/>
+       <h2 class="header" style="display: inline;">Milling Speeds &amp; Feeds</h2>
+        <div style="float:right">
+            <small><i>Derived from <a href="https://github.com/brturn/feeds-and-speeds">https://github.com/brturn/feeds-and-speeds</a></i></small>
+        </div>
+    </div>
 
     <div class="header"><b class="header">Machine</b></div>
-    <ul>
-        <li><input type="checkbox" id="in_METRIC" onclick="convertAll()">Metric?</li>
-        <li>RPM            <small>(min, max)</small>   <input id="max_RPM" value="10350">              <input id="min_RPM" value="525">    </li>
-        <li>RPM at Peak Torque                          <input id="in_PEAK_TORQUE_RPM" value="5020">                                        </li>
-        <li>Feed           <small class="imperial">in/min</small><small class="metric">mm/min</small>   <small>(min, max)</small>   <input id="max_IPM" value="135">   <input id="min_IPM" value="1">      </li>
-        <li>Spindle Power  <small class="imperial">HP</small>    <small class="metric">KW</small>   <input id="max_HP" value="1"></li>
-    </ul>
+        <div class="input-div">
+            <input type="checkbox" id="in_METRIC" onclick="convertAll()" checked><label for="in_METRIC">Metric?</label><br/>
+        </div>
+        <div class="input-div">
+            RPM <small>(min, max)</small>  <input id="min_RPM" value="100"> <input id="max_RPM" value="2100">
+        </div>
+        <div class="input-div">
+            RPM at peak torque <input id="in_PEAK_TORQUE_RPM" value="2100">
+        </div>
+        <div class="input-div">
+            Feed rate <small class="imperial">in/min</small><small class="metric">mm/min</small> <small>(min, max)</small> <input id="min_IPM" value="1"> <input id="max_IPM" value="480">
+        </div>
+        <div class="input-div">
+            Spindle power <small class="imperial">HP</small> <small class="metric">KW</small> <input id="max_HP" value="0.5">
+        </div>
 
     <div class="header"><b class="header">Tool</b></div>
-    <ul>
-        <li><select id="ux_E" onchange="uxPick('E')">
-                <option value="HSS">High Speed Steel, 27-31</option>
-                <option value="Carbide">Cemented Carbide, 75-91</option>
-                <option value="CUSTOM">CUSTOM</option>
-        </select></li>
-        <li>Modulus of Elasticity               <input id="in_E" value="27"> <small>(10^6 psi)</small></li>
-        <li>Diameter    <small class="imperial">inch</small><small class="metric">mm</small><input id="in_DIAMETER" value="0.375"></li>
-        <li>#Teeth                              <input id="in_TEETH" value="3"></li>
-        <li><input type="checkbox" id="in_BALLNOSE" onclick="inputChanged()">Ballnose?</li>
-        <li>Total Stickout  <small class="imperial">inch</small><small class="metric">mm</small><input id="in_L" value="0.9"></li>
-        <li>Helix Angle                         <input id="in_HELIX" value="30"></li>
-    </ul>
+        <div class="input-div">
+            <select id="ux_E" onchange="uxPick('E')">
+                    <option value="Carbide">Cemented Carbide, 75-91</option>
+                    <option value="HSS">High Speed Steel, 27-31</option>
+                    <option value="CUSTOM">CUSTOM</option>
+            </select>
+        </div>
+        <div class="input-div">
+        Modulus of elasticity               <input id="in_E" value="27"> <small>(10^6 psi)</small>
+        </div>
+        <div class="input-div">Diameter    <small class="imperial">inch</small><small class="metric">mm</small><input id="in_DIAMETER" value="5"></div>
+        <div class="input-div">Flutes                              <input id="in_TEETH" value="4"></div>
+        <div class="input-div"><input type="checkbox" id="in_BALLNOSE" onclick="inputChanged()"><label for="in_BALLNOSE">Ball-nose?</label></div>
+        <div class="input-div">Total stickout  <small class="imperial">inch</small><small class="metric">mm</small><input id="in_L" value="20"></div>
+        <div class="input-div">Helix angle                         <input id="in_HELIX" value="30"></div>
 
     <div class="header"><b class="header">Material</b></div>
-    <ul>
-        <li>
+        <div class="input-div">
             <select id="ux_UNITPOWER" onchange="uxPick('UNITPOWER')">
-              <option value="Aluminum">Aluminum</option>
+              <option value="Aluminium">Aluminium</option>
               <option value="Copper">Copper/Brass/Bronze</option>
               <option value="Iron">Iron</option>
               <option value="Steel">Steel</option>
@@ -138,70 +157,57 @@
               <option value="Wood">Wood</option>
               <option value="CUSTOM">CUSTOM</option>
             </select>
-        </li>
-        <li>Unit Power  <small>HP/in^3</small> <input id="in_UNITPOWER" value="0.33"></li>
-        <li><span class="imperial">SFM</span><span class="metric">SMM</span>         <small>(min, max)</small>   <input id="max_SFM" value="600">            <input id="min_SFM" value="100"></li>
-        <li>Chipload <small class="imperial">in</small><small class="metric">mm</small><small>(min, max)</small><input id="max_CHIPLOAD" value="0.0023"><input id="min_CHIPLOAD" value="0.0008"></li>
-    </ul>
+        </div>
+        <div class="input-div">Unit power  <small>HP/in^3</small> <input id="in_UNITPOWER" value="0.33"></div>
+        <div class="input-div"><span class="imperial">SFM</span><span class="metric">SMM</span>         <small>(min, max)</small>               <input id="min_SFM" value="4"> <input id="max_SFM" value="600"></div>
+        <div class="input-div">Chip load <small class="imperial">in</small><small class="metric">mm</small><small>(min, max)</small><input id="min_CHIPLOAD" value="0.0025"> <input id="max_CHIPLOAD" value="0.0023"></div>
 
     <div class="header"><b class="header">Cut</b></div>
-    <ul>
-        <li>DOC   <small class="imperial">inch</small><small class="metric">mm</small>      <small>(min, max)</small>   <input id="max_DOC" value="0.75">           <input id="min_DOC" value="0.01"></li>
-        <li>WOC   <small class="imperial">inch</small><small class="metric">mm</small>      <small>(min, max)</small>   <input id="max_WOC" value="0.375">          <input id="min_WOC" value="0.01"></li>
-        <li>Deflection  <small class="imperial">inch</small><small class="metric">mm</small> <small>(max)</small>        <input id="max_DEFLECTION" value="0.001"></li>
-<!--         <li>Reserve HP %                            <input id="in_RESERVE_HP"     value="5"></li>
-        <li>Reserve Torque %                        <input id="in_RESERVE_TORQUE" value="5"></li>
- -->
-        <li><input type="checkbox" id="in_ADAPTIVE" onclick="inputChanged()"><small>HSM / Adaptive / Constant TEA</small></li>
-    </ul>
+        <div class="input-div">DOC   <small class="imperial">inch</small><small class="metric">mm</small>      <small>(min, max)</small>              <input id="min_DOC" value="0.1"> <input id="max_DOC" value="1.0"></div>
+        <div class="input-div">WOC   <small class="imperial">inch</small><small class="metric">mm</small>      <small>(min, max)</small> <input id="min_WOC" value="0.25">  <input id="max_WOC" value="5">          </div>
+        <div class="input-div">Deflection  <small class="imperial">inch</small><small class="metric">mm</small> <small>(max)</small>        <input id="max_DEFLECTION" value="0.01"></div>
+        <div class="input-div"><input type="checkbox" id="in_ADAPTIVE" onclick="inputChanged()"><small><label for="in_ADAPTIVE">HSM / Adaptive / Constant TEA</label></small></div>
 
+        <div class="results-area">
     <div class="header"><b class="header">RESULTS</b>
         <button onclick="new_compute()">Compute</button>
         <a id="CURRENT" href="">[Bookmark this link to save these parameters]</a>
     </div>
     <div id="OUT" class="results">
-        <ul>
-            <li><ul><li><b>RPM</b>   </li><li id="RPM"    style="font-weight: bold;"/></ul></li>
-            <li><ul><li><b>Feed</b>  <small class="imperial">in/min</small><small class="metric">mm/min</small></li><li id="IPM"    style="font-weight: bold;"/></ul></li>
-            <li><ul><li><b>Plunge</b></li><li id="PLUNGE" style="font-weight: bold;"/></ul></li>
-        </ul>
-        <ul>
-            <li><ul><li>DOC <small class="imperial">inch</small><small class="metric">mm</small></li><li id="DOC"/></ul></li>
-            <li><ul><li>WOC <small class="imperial">inch</small><small class="metric">mm</small></li><li id="WOC"/></ul></li>
-            <li><ul><li><span class="imperial">SFM</span><span class="metric">SMM</span> </li><li id="SFM"/></ul></li>
-        </ul>
+            <div class="input-div"><b>RPM</b> <span id="RPM"    style="font-weight: bold;"/></div>
+            <div class="input-div"><b>Feed</b>  <small class="imperial">in/min</small><small class="metric">mm/min</small> <span id="IPM"    style="font-weight: bold;"/></div>
+            <div class="input-div"><b>Plunge</b> <span id="PLUNGE" style="font-weight: bold;"/></div>
+        
+            <div class="input-div">DOC <small class="imperial">inch</small><small class="metric">mm</small> <span id="DOC"/></div>
+            <div class="input-div">WOC <small class="imperial">inch</small><small class="metric">mm</small> <span id="WOC"/></div>
+            <div class="input-div"><span class="imperial">SFM</span><span class="metric">SMM</span> <span id="SFM"/></div>
+
+            <p><span style="background-color: orange">&nbsp;&nbsp;&nbsp;&nbsp;</span> approaching range limit <span style="background-color: red">&nbsp;&nbsp;&nbsp;&nbsp;</span> no solution; do not use</p>
+        
+        
         <div class="header"><b class="header">ADVANCED</b></div>
-        <ul>
-            <li><ul><li>MRR        <small class="imperial">in^3/min</small><small class="metric">cm^3/min</small></li><li id="MRR"/></ul></li>
-            <li><ul><li>Cut Power  <small class="imperial">HP</small><small class="metric">KW</small></li><li id="HP"/></ul></li>
-            <li><ul><li>Deflection <small class="imperial">inch</small> <small class="metric">mm</small></li><li id="DEFLECTION"/></ul></li>
-        </ul>
-        <ul>
-            <li><ul><li>Torque     <small class="imperial">in-lbs</small><small class="metric">NM</small> </li><li id="TORQUE"/></ul></li>
-            <!-- <li><ul><li>Torque     <small>(oz-in)</small>  </li><li id="TORQUEOZ"/></ul></li> -->
-            <li><ul><li>Force      <small class="imperial">lbs</small><small class="metric">kg</small>    </li><li id="P"/></ul></li>
-        </ul>
-        <ul>
-            <li><ul><li>Chipload   <small class="imperial">inch</small><small class="metric">mm</small></li><li id="CHIPLOAD"/></ul></li>
-            <li><ul><li>Radial     </li><li id="RCTF"/></ul></li>
-            <li><ul><li>Axial      </li><li id="ACTF"/></ul></li>
-            <li><ul><li>Feed Adj.  </li><li id="FCF"/></ul></li>
-        </ul>
-        <ul>
-            <li><ul><li>Adj. Unit Pwr </li><li id="UNITPOWER"/></ul></li>
-            <li><ul><li>Eff. Diameter <small class="imperial">inch</small><small class="metric">mm</small></li><li id="EFFECTIVE"/></ul></li>
-            <li><ul><li>TEA  <small>(deg.)</small> </li><li id="TEA"/></ul></li>
-        </ul>
+        
+            <div class="input-div">MRR        <small class="imperial">in^3/min</small><small class="metric">cm^3/min</small> <span id="MRR"/></div>
+            <div class="input-div">Cut power  <small class="imperial">HP</small><small class="metric">KW</small> <span id="HP"/></div>
+            <div class="input-div">Deflection <small class="imperial">inch</small> <small class="metric">mm</small> <span id="DEFLECTION"/></div>
+        
+        
+            <div class="input-div">Torque     <small class="imperial">in-lbs</small><small class="metric">NM</small> <span id="TORQUE"/></div>
+            <div class="input-div">Force      <small class="imperial">lbs</small><small class="metric">kg</small>    <span id="P"/></div>
+        
+        
+            <div class="input-div">Chip load  <small class="imperial">inch</small><small class="metric">mm</small> <span id="CHIPLOAD"/></div>
+            <div class="input-div">Radial chip-thinning factor    <span id="RCTF"/></div>
+            <div class="input-div">Axial chip-thinning factor     <span id="ACTF"/></div>
+            <div class="input-div">Feed adj.  <span id="FCF"/></div>
+        
+        
+            <div class="input-div">Adj. unit power <span id="UNITPOWER"/></div>
+            <div class="input-div">Eff. diameter <small class="imperial">inch</small><small class="metric">mm</small> <span id="EFFECTIVE"/></div>
+            <div class="input-div">TEA  <small>(deg.)</small> <span id="TEA"/></div>
     </div>
 
-    <div class="header"><b class="header">Parameter Variations</b></div>
-    <table id="ALTERNATIVES" class="content"></table>
-    <div>
-        <div id="chart_div" style="width: 900px; height: 500px;"></div>
-        <div id="chart_div2" style="width: 900px; height: 500px;"></div>
     </div>
-
-  <div class="footer">Copyright 2015-2016 by Bryan Turner, All Rights Reserved</div>
 </div>    
 
 <script type="text/javascript">
@@ -214,7 +220,7 @@
     // HSS cut parameters roughly taken from:
     //    Machinery's Handbook 29 (2012) pp1083-1084
     cutParameters.HSS = {};
-    cutParameters.HSS.Aluminum  = [600, 160]    // SFM, then Chipload as (DIAMETER / XXX)]
+    cutParameters.HSS.Aluminium  = [600, 160]    // SFM, then Chipload as (DIAMETER / XXX)]
     cutParameters.HSS.Copper    = [250, 160]    // ie:  [250, 160] ==> SFM = 250, Chipload = DIAMETER / 160
     cutParameters.HSS.Iron      = [80, 200]
     cutParameters.HSS.Steel     = [60, 250]
@@ -226,7 +232,7 @@
     // Carbide parameters roughly taken from:
     //    http://robbjack.com/technical/speed-and-feed
     cutParameters.Carbide = {};
-    cutParameters.Carbide.Aluminum  = [2500, 80]
+    cutParameters.Carbide.Aluminium  = [2500, 80]
     cutParameters.Carbide.Copper    = [600, 80]
     cutParameters.Carbide.Iron      = [400, 100]
     cutParameters.Carbide.Steel     = [260, 300]
@@ -238,7 +244,7 @@
     // HSS cut parameters roughly taken from:
     //    Machinery's Handbook 29 (2012) pp1083-1084
     var unitPower = {};
-    unitPower.Aluminum = 0.33
+    unitPower.Aluminium = 0.33
     unitPower.Copper = 0.80;
     unitPower.Iron = 0.85;
     unitPower.Steel = 1.00;
@@ -427,47 +433,6 @@
 
             finalize();
 
-            // --------------------------------------------
-            //  Graphs
-            if ( typeof google != "undefined" )
-            {
-                // DOC/WOC axis, with MRR heat map, IPM-sized bubbles, labeled with RPM
-                var graph = [];
-                graph[0] = ['RPM', 'WOC', 'DOC', 'MRR', 'IPM'];
-                for ( var i = 0; i < results.length; i++ )
-                    graph[graph.length] = [ ' ' + imperialToDisplay(results[i].RPM, RPM.metToImp)
-                                          , imperialToDisplay(results[i].WOC, WOC.metToImp)
-                                          , imperialToDisplay(results[i].DOC, DOC.metToImp)
-                                          , imperialToDisplay(results[i].MRR, MRR.metToImp)
-                                          , imperialToDisplay(results[i].IPM, IPM.metToImp) ];
-                drawChart(graph, 'chart_div', docOptions);
-
-                // RPM/IPM axis, with MRR heat map, and HP-sized bubbles
-                graph = [];
-                graph[0] = ['DOC','IPM', 'RPM', 'MRR', 'HP'];
-                for ( var i = 0; i < results.length; i++ )
-                    graph[graph.length] = [ ' ' + imperialToDisplay(results[i].DOC, DOC.metToImp)
-                                          , imperialToDisplay(results[i].IPM, IPM.metToImp)
-                                          , imperialToDisplay(results[i].RPM, RPM.metToImp)
-                                          , imperialToDisplay(results[i].MRR, MRR.metToImp)
-                                          , imperialToDisplay(results[i].HP,  HP.metToImp) ];
-                drawChart(graph, 'chart_div2', rpmOptions);
-            }
-            else
-            {
-                // If Google Graphs are not available, display alternatives in text..
-                var alt = document.getElementById('ALTERNATIVES');
-                alt.innerHTML = '<table><tr><td>RPM</td><td>IPM</td><td>WOC</td><td>DOC</td><td>MRR</td></tr>';
-                for ( var i = 0; i < results.length; i++ )
-                    alt.innerHTML += '<tr><td>'
-                                     + imperialToDisplay(results[i].RPM, RPM.metToImp) + '</td><td>'
-                                     + imperialToDisplay(results[i].IPM, IPM.metToImp) + '</td><td>'
-                                     + imperialToDisplay(results[i].WOC, WOC.metToImp) + '</td><td>'
-                                     + imperialToDisplay(results[i].DOC, DOC.metToImp) + '</td><td>'
-                                     + imperialToDisplay(results[i].MRR, MRR.metToImp) + '</td></tr>';
-                alt.innerHTML += '</table>'
-            }
-            // --------------------------------
             // Generate a URL with the inputs from the form so users can bookmark the parameters.
             //
             var inputs = document.getElementsByTagName('input');
@@ -760,9 +725,6 @@
     {
         ridx = 0;  // Reset random numbers
         results  = [];
-        drawChart([['RPM', 'WOC', 'DOC', 'MRR', 'IPM'],['0',0,0,0,0]], 'chart_div', docOptions);
-        drawChart([[' ','IPM', 'RPM', 'MRR', 'HP'],['',0,0,0,0]], 'chart_div2', rpmOptions);
-        document.getElementById('ALTERNATIVES').innerHTML = "";
     }
 
     function inputChanged(v)
@@ -1044,16 +1006,6 @@
         sizeAxis: {minValue: 0,  maxSize: 15}
     };
 
-
-    function drawChart(doms,id,options)
-    {
-        if ( typeof google != "undefined" )
-        {
-            var data = google.visualization.arrayToDataTable(doms);
-            var chart = new google.visualization.BubbleChart(document.getElementById(id));
-            chart.draw(data, options);
-        }
-    }
 
     // --------------------------------------------------
     // Fixed random numbers; repeatable searches.
@@ -1585,12 +1537,9 @@
         // ---------------------------------------------------------------------------------------
         // Run new_compute to get things rolling
         new_compute();
-        setTimeout(inputChanged, 2000);
+        setTimeout(inputChanged, 200);
 
     </script>
-
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">google.load('visualization', '1', {packages: ['corechart']});</script>
 
     </body>
  </html>

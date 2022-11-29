@@ -1,8 +1,7 @@
 # feeds-and-speeds
+
 Optimizing Feeds &amp; Speeds Calculator for CNC Milling
 
-[GitHub Hosted Calculator](http://brturn.github.io/feeds-and-speeds)
-
-[GitHub Hosted Instructions](http://brturn.github.io/feeds-and-speeds/instructions.html)
-
-[BETA: HSM Calculator](http://brturn.github.io/feeds-and-speeds/beta.html)
+This is a fork of [brturn](https://github.com/brturn/feeds-and-speeds)'s project, with
+the aim of making the user interface more convenient for me (but not necessarily
+for you).
